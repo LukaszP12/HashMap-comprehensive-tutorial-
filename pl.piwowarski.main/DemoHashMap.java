@@ -1,5 +1,7 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 class DemoHashMap {
@@ -12,6 +14,8 @@ class DemoHashMap {
         basics();
         queriesAndViews();
         iterationPatterns();
+        java8Defaults();
+        countersAndGrouping();
     }
 
 
@@ -72,5 +76,68 @@ class DemoHashMap {
             if (it.next().getKey().equals("b")) it.remove();
         }
         System.out.println("after removing 'b': " + m);
+    }
+
+    // 5) Java 8 default methods on Map
+    static void java8Defaults() {
+        System.out.println("\n== Java 8 Map defaults ==");
+        Map<String, Integer> m = new HashMap<>();
+        System.out.println("getOrDefault('x',99) = " + m.getOrDefault("x", 99));
+
+        System.out.println("-- putIfAbsent");
+        m.putIfAbsent("x", 1); // inserts 1
+        m.putIfAbsent("x", 2); // ignored
+        System.out.println("m = " + m);
+
+        System.out.println("-- replace (two-arg and three-arg)");
+        m.replace("x", 10); // replaces since key present
+        m.replace("x", 10, 20); // CAS-style
+        System.out.println("m = " + m);
+
+        System.out.println("-- computeIfAbsent");
+        m.computeIfAbsent("y", k -> 100);
+        System.out.println("m = " + m);
+
+        System.out.println("-- computeIfPresent");
+        m.computeIfPresent("y", (k, v) -> v + 1);
+        System.out.println("m = " + m);
+
+        System.out.println("-- compute (always runs)");
+        m.compute("z", (k, v) -> v == null ? 5 : v + 5);
+        System.out.println("m = " + m);
+
+        System.out.println("-- merge (counters/accumulation)");
+        m.merge("z", 1, Integer::sum); // z = 6
+        m.merge("z", 4, Integer::sum); // z = 10
+        System.out.println("m = " + m);
+
+        System.out.println("-- replaceAll (bulk transform)");
+        m.replaceAll((k, v) -> v * 2);
+        System.out.println("m = " + m);
+
+        System.out.println("-- forEach (side effects/printing)");
+        m.forEach((k, v) -> System.out.println(k + " -> " + v));
+    }
+
+    // 6) Patterns: counters and grouping
+    static void countersAndGrouping() {
+        System.out.println("\n== Patterns: counters & grouping ==");
+        String text = "to be or not to be";
+        Map<String, Integer> freq = new HashMap<>();
+        for (String w : text.split("\\s+")) {
+            freq.merge(w, 1, Integer::sum); // counting words
+        }
+        System.out.println("freq: " + freq);
+
+        // Group users by first letter using computeIfAbsent
+        List<User> users = List.of(
+                new User(1, "Alice"), new User(2, "Bob"),
+                new User(3, "Ava"), new User(4, "Ben"));
+        Map<Character, List<User>> byInitial = new HashMap<>();
+        for (User u : users) {
+            char k = u.name().charAt(0);
+            byInitial.computeIfAbsent(k, kk -> new ArrayList<>()).add(u);
+        }
+        System.out.println("grouped: " + byInitial);
     }
 }
