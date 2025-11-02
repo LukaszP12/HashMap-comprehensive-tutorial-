@@ -1,6 +1,5 @@
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
 class DemoHashMap {
@@ -11,6 +10,8 @@ class DemoHashMap {
     public static void main(String[] args) {
         constructors();
         basics();
+        queriesAndViews();
+        iterationPatterns();
     }
 
 
@@ -39,5 +40,37 @@ class DemoHashMap {
         System.out.println("map now     = " + m);
         m.clear();
         System.out.println("cleared, size=" + m.size() + ", isEmpty=" + m.isEmpty());
+    }
+
+    // 3) Queries & views
+    static void queriesAndViews() {
+        System.out.println("\n== Queries & views ==");
+        Map<String, Integer> m = new HashMap<>(Map.of("a", 1, "b", 2, "c", 3));
+        System.out.println("containsKey('b')  " + m.containsKey("b"));
+        System.out.println("containsValue(99) " + m.containsValue(99));
+        System.out.println("keySet()          " + m.keySet());
+        System.out.println("values()          " + m.values());
+        System.out.println("entrySet()        " + m.entrySet());
+    }
+
+    // 4) Iteration patterns
+    static void iterationPatterns() {
+        System.out.println("\n== Iteration patterns ==");
+        Map<String, Integer> m = new HashMap<>(Map.of("a", 1, "b", 2, "c", 3));
+
+        System.out.println("-- forEach");
+        m.forEach((k, v) -> System.out.println(k + " -> " + v));
+
+        System.out.println("-- entrySet for loop");
+        for (Map.Entry<String, Integer> e : m.entrySet()) {
+            System.out.println(e.getKey() + ":" + e.getValue());
+        }
+
+        System.out.println("-- iterator remove (fail-fast safe)");
+        Iterator<Map.Entry<String, Integer>> it = m.entrySet().iterator();
+        while (it.hasNext()) {
+            if (it.next().getKey().equals("b")) it.remove();
+        }
+        System.out.println("after removing 'b': " + m);
     }
 }
