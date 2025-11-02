@@ -8,6 +8,7 @@ class MergeDemo10 {
         Map<String, Integer> inventory = new HashMap<>(Map.of("apple", 2, "banana", 1, "cherry", 3));
         Map<String, Integer> sold = Map.of("banana", 1, "cherry", 3);
 
+        // in merge() the second parameter always applied to the new value
         sold.forEach((item, count) ->
                 inventory.merge(item, -count, (oldVal, newVal) -> {
                     int updated = oldVal + newVal;
